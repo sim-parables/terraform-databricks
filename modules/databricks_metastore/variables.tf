@@ -8,9 +8,9 @@ variable "databricks_unity_admin_group" {
   description = "Databricks Accounts Admin Group Name"
 }
 
-variable "databricks_workspace_ids" {
-  type        = list(string)
-  description = "List of Databricks workspace IDs to be enabled with Unity Catalog."
+variable "databricks_workspace_id" {
+  type        = string
+  description = "Databricks workspace ID to be enabled with Unity Catalog."
 }
 
 variable "databricks_storage_root" {

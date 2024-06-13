@@ -42,8 +42,8 @@ resource "databricks_metastore" "this" {
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_metastore_assignment" "this" {
   provider             = databricks.accounts
-  for_each             = toset(var.databricks_workspace_ids)
-  workspace_id         = each.key
+
+  workspace_id         = var.databricks_workspace_id
   metastore_id         = databricks_metastore.this.id
   default_catalog_name = var.databricks_catalog_name
 }
