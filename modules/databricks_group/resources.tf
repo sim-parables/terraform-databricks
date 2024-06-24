@@ -26,3 +26,20 @@ resource "databricks_group" "this" {
   allow_instance_pool_create = var.allow_instance_pool_create
   databricks_sql_access      = var.allow_databricks_sql_access
 }
+
+## ---------------------------------------------------------------------------------------------------------------------
+## DATABRICKS GROUP MEMBER RESOURCE
+##
+## Adds a member to a Databricks group. The member can be either a user or a service principal.
+##
+## Parameters:
+## - `group_id`: The ID of the Databricks group.
+## - `member_id`: The ID of the member to add to the group.
+## ---------------------------------------------------------------------------------------------------------------------
+resource "databricks_group_member" "this" {
+  provider  = databricks.workspace
+  count     = length(var.member_ids)
+  
+  group_id  = databricks_group.this.id
+  member_id = var.member_ids[count.index]
+}

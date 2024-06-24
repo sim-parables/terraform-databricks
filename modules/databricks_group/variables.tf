@@ -30,3 +30,9 @@ variable "allow_databricks_sql_access" {
   description = "Allow Group to Access Databricks SQL"
   default     = false
 }
+
+variable "member_ids" {
+  type        = list(string)
+  description = "List of Databricks Member IDs (applicable for both users and service principals)"
+  default     = []
+}
