@@ -2,7 +2,10 @@ terraform {
   required_providers {
     databricks = {
       source = "databricks/databricks"
-      configuration_aliases = [ databricks.accounts ]
+      configuration_aliases = [ 
+        databricks.accounts,
+        databricks.workspace 
+      ]
     }
   }
 }
@@ -41,9 +44,35 @@ resource "databricks_metastore" "this" {
 ## - `default_catalog_name`: The default catalog name to be used in the metastore.
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_metastore_assignment" "this" {
-  provider             = databricks.accounts
-
+  provider   = databricks.accounts
+  depends_on = [ databricks_metastore.this ]
+  
   workspace_id         = var.databricks_workspace_id
   metastore_id         = databricks_metastore.this.id
   default_catalog_name = var.databricks_catalog_name
+}
+
+
+## ---------------------------------------------------------------------------------------------------------------------
+## DATABRICKS GRANTS RESOURCE
+##
+## This resource block manages grants on a Databricks metastore.
+##
+## Parameters:
+## - `metastore`: The ID of the Databricks metastore to apply the grants to.
+## - `principal`: The principal (user or group) to grant privileges to.
+## - `privileges`: A list of privileges to grant to the principal.
+## ---------------------------------------------------------------------------------------------------------------------
+resource "databricks_grants" "this" {
+  provider  = databricks.workspace
+  metastore = databricks_metastore.this.id
+
+  dynamic "grant" {
+    for_each = var.databricks_metastore_grants
+    
+    content {
+      principal = grant.value.principal
+      privileges = grant.value.privileges
+    }
+  }
 }

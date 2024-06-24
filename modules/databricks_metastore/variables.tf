@@ -39,3 +39,15 @@ variable "databricks_catalog_name" {
   description = "Display Name for Databricks Accounts Metastore Catalog"
   default     = "hive_metastore"
 }
+
+variable "databricks_metastore_grants" {
+  description = <<EOT
+    List of Databricks Metastore Specific Grants. Default privileges when creating a metastore
+    should include: CREATE_CATALOG, CREATE_CONNECTION, CREATE_EXTERNAL_LOCATION, CREATE_STORAGE_CREDENTIAL
+  EOT
+  default     = []
+  type        = list(object({
+    principal = string
+    privileges = list(string)
+  }))
+}
