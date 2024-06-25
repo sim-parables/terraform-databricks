@@ -36,6 +36,8 @@ resource "databricks_external_location" "this" {
   name            = var.databricks_external_location_name
   url             = var.databricks_external_storage_url
   credential_name = var.databricks_storage_credential_id
+
+  force_destroy   = true
 }
 
 
