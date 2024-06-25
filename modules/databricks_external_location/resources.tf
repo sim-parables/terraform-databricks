@@ -34,7 +34,7 @@ locals {
 resource "databricks_external_location" "this" {
   provider        = databricks.workspace
   name            = var.databricks_external_location_name
-  url             = var.databricks_external_storage_url
+  url             = "${var.databricks_external_storage_url}/databricks_external"
   credential_name = var.databricks_storage_credential_id
 
   force_destroy   = true
@@ -54,7 +54,9 @@ resource "databricks_external_location" "this" {
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_catalog" "this" {
   provider     = databricks.workspace
-  storage_root = var.databricks_external_storage_url
+  depends_on   = [ databricks_external_location.this ]
+
+  storage_root = "${var.databricks_external_storage_url}/databricks_unity_catalog"
   name         = var.databricks_catalog_name
   comment      = var.databricks_catalog_comment
   properties = local.tags
@@ -72,7 +74,9 @@ resource "databricks_catalog" "this" {
 ## - `privileges`: A list of privileges to grant to the principal.
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_grants" "this" {
-  provider = databricks.workspace
+  provider   = databricks.workspace
+  depends_on = [ databricks_catalog.this ]
+
   catalog  = databricks_catalog.this.name
 
   dynamic "grant" {
