@@ -56,7 +56,7 @@ resource "databricks_catalog" "this" {
   provider     = databricks.workspace
   depends_on   = [ databricks_external_location.this ]
 
-  storage_root = "${var.databricks_external_storage_url}/databricks_unity_catalog"
+  storage_root = "${var.databricks_external_storage_url}/databricks_external"
   name         = var.databricks_catalog_name
   comment      = var.databricks_catalog_comment
   properties = local.tags
