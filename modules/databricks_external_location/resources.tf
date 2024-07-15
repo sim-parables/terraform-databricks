@@ -62,6 +62,22 @@ resource "databricks_catalog" "this" {
   properties = local.tags
 }
 
+## ---------------------------------------------------------------------------------------------------------------------
+## TIME SLEEP RESOURCE
+##
+## This resource defines a delay to allow time for Databricks Metastore assignment to propagate to Workspace.
+##
+## Parameters:
+## - `create_duration`: The duration for the time sleep.
+## ---------------------------------------------------------------------------------------------------------------------
+resource "time_sleep" "metastore_assignment_propogation" {
+  depends_on = [ 
+    databricks_catalog.this,
+  ]
+
+  create_duration = "20s"
+}
+
 
 ## ---------------------------------------------------------------------------------------------------------------------
 ## DATABRICKS GRANTS RESOURCE
@@ -75,7 +91,10 @@ resource "databricks_catalog" "this" {
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_grants" "this" {
   provider   = databricks.workspace
-  depends_on = [ databricks_catalog.this ]
+  depends_on = [ 
+    databricks_catalog.this,
+    time_sleep.metastore_assignment_propogation,
+  ]
 
   catalog  = databricks_catalog.this.name
 
