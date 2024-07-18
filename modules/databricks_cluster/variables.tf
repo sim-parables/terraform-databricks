@@ -74,3 +74,13 @@ variable "maven_libraries" {
     "org.apache.hadoop:hadoop-azure:3.3.3"
   ]
 }
+
+variable "azure_attributes" {
+  description = "Azure Compute Configurations for Databricks Clusters"
+  default     = null
+  type        = object({
+    availability       = string
+    first_on_demand    = number
+    spot_bid_max_price = number
+  })
+}

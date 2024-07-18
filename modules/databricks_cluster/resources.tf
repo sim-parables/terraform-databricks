@@ -85,10 +85,31 @@ resource "databricks_cluster" "this" {
     max_workers = var.num_workers_max
   }
 
+  dynamic "azure_attributes" {
+    for_each = var.azure_attributes
+    
+    content {
+      availability       = azure_attributes.availability
+      first_on_demand    = azure_attributes.first_on_demand
+      spot_bid_max_price = azure_attributes.spot_bid_max_price
+    }
+  }
+
   spark_env_vars = var.spark_env_variable
   spark_conf = var.spark_conf_variable
 }
 
+
+## ---------------------------------------------------------------------------------------------------------------------
+## DATABRICKS ARTIFACT ALLOW LIST RESOURCE
+##
+## This resource whitelists specific artifacts to be installed on the cluster.
+## 
+## Parameters:
+## - `artifact_type`: Spark artifact type. Default to LIBRARY_MAVEN.
+## - `artifact`: Name of artifact, or artifact coordinates.
+## - `match_type`: Artifact match type.
+## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_artifact_allowlist" "this" {
   provider = databricks.workspace
   for_each = toset(var.maven_libraries)
