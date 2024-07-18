@@ -52,6 +52,22 @@ resource "databricks_metastore_assignment" "this" {
   default_catalog_name = var.databricks_catalog_name
 }
 
+## ---------------------------------------------------------------------------------------------------------------------
+## TIME SLEEP RESOURCE
+##
+## This resource defines a delay to allow time for Databricks Metastore assignment to propagate.
+##
+## Parameters:
+## - `create_duration`: The duration for the time sleep.
+## ---------------------------------------------------------------------------------------------------------------------
+resource "time_sleep" "assignment_propogation" {
+  depends_on = [ 
+    module.databricks_metastore_assignment,
+  ]
+
+  create_duration = "10s"
+}
+
 
 ## ---------------------------------------------------------------------------------------------------------------------
 ## DATABRICKS GRANTS RESOURCE
@@ -64,8 +80,9 @@ resource "databricks_metastore_assignment" "this" {
 ## - `privileges`: A list of privileges to grant to the principal.
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_grants" "this" {
-  provider  = databricks.workspace
-  metastore = databricks_metastore.this.id
+  provider   = databricks.workspace
+  depends_on = [ time_sleep.assignment_propogation ]
+  metastore  = databricks_metastore.this.id
 
   dynamic "grant" {
     for_each = var.databricks_metastore_grants
