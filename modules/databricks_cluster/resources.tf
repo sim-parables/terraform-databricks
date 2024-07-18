@@ -89,9 +89,9 @@ resource "databricks_cluster" "this" {
     for_each = var.azure_attributes
     
     content {
-      availability       = azure_attributes.availability
-      first_on_demand    = azure_attributes.first_on_demand
-      spot_bid_max_price = azure_attributes.spot_bid_max_price
+      availability       = azure_attributes.value["availability"]
+      first_on_demand    = azure_attributes.value["first_on_demand"]
+      spot_bid_max_price = azure_attributes.value["spot_bid_max_price"]
     }
   }
 
