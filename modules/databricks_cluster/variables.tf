@@ -78,11 +78,11 @@ variable "maven_libraries" {
 variable "azure_attributes" {
   description = "Azure Compute Configurations for Databricks Clusters"
   default     = null
-  type        = map(object({
-    attirbutes = object({
+  type        = object({
+    attributes = object({
       availability       = string
       first_on_demand    = number
       spot_bid_max_price = number 
     })
-  }))
+  })
 }
