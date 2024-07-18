@@ -62,7 +62,7 @@ resource "databricks_metastore_assignment" "this" {
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "time_sleep" "assignment_propogation" {
   depends_on = [ 
-    module.databricks_metastore_assignment,
+    databricks_metastore_assignment.this,
   ]
 
   create_duration = "10s"
