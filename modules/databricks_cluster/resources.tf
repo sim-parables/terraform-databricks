@@ -111,9 +111,10 @@ resource "databricks_cluster" "this" {
 ## - `match_type`: Artifact match type.
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_artifact_allowlist" "this" {
-  provider = databricks.workspace
-  for_each = toset(var.maven_libraries)
-
+  provider   = databricks.workspace
+  depends_on = [ databricks_cluster.this ]
+  for_each   = toset(var.maven_libraries)
+  
   artifact_type = "LIBRARY_MAVEN"
   artifact_matcher {
     artifact   = each.value
@@ -135,7 +136,6 @@ resource "databricks_artifact_allowlist" "this" {
 resource "databricks_library" "this" {
   provider   = databricks.workspace
   depends_on = [ databricks_artifact_allowlist.this ]
-
   for_each   = toset(var.maven_libraries)
 
   cluster_id = databricks_cluster.this.id
