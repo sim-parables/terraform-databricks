@@ -57,22 +57,32 @@ variable "num_workers_max" {
   default     = 1
 }
 
-variable "maven_repo" {
-  type        = string
-  description = "Maven Library Repo"
-  default     = "https://maven-central.storage-download.googleapis.com/maven2/"
+variable "library_paths" {
+  description = "Databricks Unity Catalog Library Volume to be included in the ALLOWED LIST on Databricks Cluster"
+  default     = null
+  type        = list(object({
+    artifact      = string
+    artifact_type = string
+    match_type    = string
+  }))
 }
 
-variable "maven_libraries" {
+variable "jar_libraries" {
+  description = "List of JAR files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
   type        = list(string)
-  description = "Maven JAR Library to be installed on Databricks Cluster"
-  default     = [
-    "org.apache.hadoop:hadoop-aws:3.3.4",
-    "com.amazonaws:aws-java-sdk:1.12.552",
-    "org.apache.hadoop:hadoop-azure-datalake:3.3.3",
-    "org.apache.hadoop:hadoop-common:3.3.3",
-    "org.apache.hadoop:hadoop-azure:3.3.3"
-  ]
+  default     = []
+}
+
+variable "whl_libraries" {
+  description = "List of Python WHL files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
+  type        = list(string)
+  default     = []
+}
+
+variable "requirements_libraries" {
+  description = "List of Python requirements files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
+  type        = list(string)
+  default     = []
 }
 
 variable "azure_attributes" {

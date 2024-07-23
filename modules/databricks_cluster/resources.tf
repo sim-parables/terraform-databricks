@@ -89,9 +89,9 @@ resource "databricks_cluster" "this" {
     for_each = var.azure_attributes
     
     content {
-      availability       = azure_attributes.value["availability"]
-      first_on_demand    = azure_attributes.value["first_on_demand"]
-      spot_bid_max_price = azure_attributes.value["spot_bid_max_price"]
+      availability       = azure_attributes.value.availability
+      first_on_demand    = azure_attributes.value.first_on_demand
+      spot_bid_max_price = azure_attributes.value.spot_bid_max_price
     }
   }
 
@@ -113,12 +113,12 @@ resource "databricks_cluster" "this" {
 resource "databricks_artifact_allowlist" "this" {
   provider   = databricks.workspace
   depends_on = [ databricks_cluster.this ]
-  for_each   = toset(var.maven_libraries)
+  for_each   = tomap({for t in var.library_paths : t.artifact => t})
   
-  artifact_type = "LIBRARY_MAVEN"
+  artifact_type = each.value.artifact_type
   artifact_matcher {
-    artifact   = each.value
-    match_type = "PREFIX_MATCH"
+    artifact   = each.value.artifact
+    match_type = each.value.match_type
   }
 }
 
@@ -126,21 +126,55 @@ resource "databricks_artifact_allowlist" "this" {
 ## ---------------------------------------------------------------------------------------------------------------------
 ## DATABRICKS LIBRARY RESOURCE
 ##
-## This resource block defines a Databricks library.
+## This resource block defines a Databricks JAR libraries to install.
 ## 
 ## Parameters:
 ## - `cluster_id`: The ID of the Databricks cluster to which the library will be attached.
-## - `maven_repo`: The Maven repository for the library.
-## - `coordinates`: The Maven coordinates for the library.
+## - `jar`: The path to the unity catalog library jar
 ## ---------------------------------------------------------------------------------------------------------------------
-resource "databricks_library" "this" {
+resource "databricks_library" "jar" {
   provider   = databricks.workspace
   depends_on = [ databricks_artifact_allowlist.this ]
-  for_each   = toset(var.maven_libraries)
+  for_each   = toset(var.jar_libraries)
 
   cluster_id = databricks_cluster.this.id
-  maven {
-    repo        = var.maven_repo
-    coordinates = each.value
-  }
+  jar        = each.value
+}
+
+
+## ---------------------------------------------------------------------------------------------------------------------
+## DATABRICKS LIBRARY RESOURCE
+##
+## This resource block defines a Databricks Python Whl libraries to install.
+## 
+## Parameters:
+## - `cluster_id`: The ID of the Databricks cluster to which the library will be attached.
+## - `whl`: The path to the unity catalog library python whl
+## ---------------------------------------------------------------------------------------------------------------------
+resource "databricks_library" "whl" {
+  provider   = databricks.workspace
+  depends_on = [ databricks_artifact_allowlist.this ]
+  for_each   = toset(var.whl_libraries)
+
+  cluster_id = databricks_cluster.this.id
+  whl        = each.value
+}
+
+
+## ---------------------------------------------------------------------------------------------------------------------
+## DATABRICKS LIBRARY RESOURCE
+##
+## This resource block defines a Databricks Python requirements libraries to install.
+## 
+## Parameters:
+## - `cluster_id`: The ID of the Databricks cluster to which the library will be attached.
+## - `whl`: The path to the unity catalog library python whl
+## ---------------------------------------------------------------------------------------------------------------------
+resource "databricks_library" "whl" {
+  provider   = databricks.workspace
+  depends_on = [ databricks_artifact_allowlist.this ]
+  for_each   = toset(var.requirements_libraries)
+
+  cluster_id = databricks_cluster.this.id
+  requirements        = each.value
 }
