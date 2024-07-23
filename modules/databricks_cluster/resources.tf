@@ -170,7 +170,7 @@ resource "databricks_library" "whl" {
 ## - `cluster_id`: The ID of the Databricks cluster to which the library will be attached.
 ## - `whl`: The path to the unity catalog library python whl
 ## ---------------------------------------------------------------------------------------------------------------------
-resource "databricks_library" "whl" {
+resource "databricks_library" "resource" {
   provider   = databricks.workspace
   depends_on = [ databricks_artifact_allowlist.this ]
   for_each   = toset(var.requirements_libraries)
