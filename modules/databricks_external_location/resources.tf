@@ -51,6 +51,7 @@ resource "databricks_external_location" "this" {
 ## - `name`: The name of the Databricks catalog.
 ## - `comment`: A comment or description for the catalog.
 ## - `properties`: A map of tags to associate with the catalog.
+## - `force_destroy`: A flag to enable force destroy when catalog in not empty.
 ## ---------------------------------------------------------------------------------------------------------------------
 resource "databricks_catalog" "this" {
   provider     = databricks.workspace
@@ -60,7 +61,10 @@ resource "databricks_catalog" "this" {
   name         = var.databricks_catalog_name
   comment      = var.databricks_catalog_comment
   properties = local.tags
+
+  force_destroy = true
 }
+
 
 ## ---------------------------------------------------------------------------------------------------------------------
 ## TIME SLEEP RESOURCE
