@@ -160,21 +160,3 @@ resource "databricks_library" "whl" {
   whl        = each.value
 }
 
-
-## ---------------------------------------------------------------------------------------------------------------------
-## DATABRICKS LIBRARY RESOURCE
-##
-## This resource block defines a Databricks Python requirements libraries to install.
-## 
-## Parameters:
-## - `cluster_id`: The ID of the Databricks cluster to which the library will be attached.
-## - `whl`: The path to the unity catalog library python whl
-## ---------------------------------------------------------------------------------------------------------------------
-resource "databricks_library" "resource" {
-  provider   = databricks.workspace
-  depends_on = [ databricks_artifact_allowlist.this ]
-  for_each   = toset(var.requirements_libraries)
-
-  cluster_id = databricks_cluster.this.id
-  requirements        = each.value
-}

@@ -79,12 +79,6 @@ variable "whl_libraries" {
   default     = []
 }
 
-variable "requirements_libraries" {
-  description = "List of Python requirements files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
-  type        = list(string)
-  default     = []
-}
-
 variable "azure_attributes" {
   description = "Azure Compute Configurations for Databricks Clusters"
   default     = null
