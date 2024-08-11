@@ -312,7 +312,7 @@ data "http" "sample_weather_data" {
 ## - `databricks_files`: Map of Databricks files to upload into Unity Catalog Volumes.
 ## ---------------------------------------------------------------------------------------------------------------------
 module "databricks_sample_data" {
-  source       = "../../modules/databricks_catalog_config"
+  source       = "./modules/databricks_catalog_config"
   depends_on   = [ module.databricks_metastore ]
   
   databricks_schemas = local.databricks_schemas
@@ -337,7 +337,7 @@ module "databricks_sample_data" {
 ## - `databricks_tables`: Databricks Unity Catalog Table attributes to create.
 ## ---------------------------------------------------------------------------------------------------------------------
 module "databricks_sample_tables" {
-  source     = "../../modules/databricks_catalog_config"
+  source     = "./modules/databricks_catalog_config"
   count      = var.DATABRICKS_CLUSTERS > 0 ? 1 : 0
   depends_on = [ 
     module.databricks_sample_data,
@@ -348,7 +348,7 @@ module "databricks_sample_tables" {
     {
       cluster_id         = module.databricks_cluster[count.index].databricks_cluster_id
       catalog_name       = var.databricks_catalog_name
-      schema_name        = local.schema_name
+      schema_name        = var.databricks_schema_name
       table_name         = "example_weather"
       table_type         = "EXTERNAL"
       data_source_format = "DELTA"
