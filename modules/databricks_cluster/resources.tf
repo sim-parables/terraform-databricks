@@ -113,7 +113,7 @@ resource "databricks_cluster" "this" {
 resource "databricks_artifact_allowlist" "this" {
   provider   = databricks.workspace
   depends_on = [ databricks_cluster.this ]
-  for_each   = tomap({for t in var.library_paths : t.artifact => t})
+  for_each   = var.library_paths
   
   artifact_type = each.value.artifact_type
   artifact_matcher {

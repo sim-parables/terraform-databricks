@@ -58,12 +58,12 @@ variable "num_workers_max" {
 }
 
 variable "library_paths" {
-  description = "Databricks Unity Catalog Library Volume to be included in the ALLOWED LIST on Databricks Cluster"
+  description = "Map of Databricks Unity Catalog Library Volume to be included in the ALLOWED LIST on Databricks Cluster"
   default     = null
-  type        = list(object({
-    artifact      = string
-    artifact_type = string
-    match_type    = string
+  type        = map(object({
+      artifact      = string
+      artifact_type = string
+      match_type    = string
   }))
 }
 

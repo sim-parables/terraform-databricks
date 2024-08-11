@@ -68,13 +68,13 @@ locals {
     }
   ])
   
-  databricks_cluster_library_paths = [
-    {
+  databricks_cluster_library_paths = {
+    jar = {
       artifact = "/Volumes/${var.databricks_catalog_name}/${var.databricks_schema_name}/Libraries"
       artifact_type = "LIBRARY_JAR"
       match_type    = "PREFIX_MATCH"
-    },
-  ]
+    }
+  }
 
   databricks_cluster_jar_libraries = [
     for l in var.databricks_cluster_library_files :
