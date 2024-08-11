@@ -167,6 +167,30 @@ module "databricks_instance_pool_node" {
 
 
 ## ---------------------------------------------------------------------------------------------------------------------
+## DATABRICKS WORKSPACE GROUP MODULE
+## 
+## This module sets up agroup in a Databricks at the workspace level. Workspace level groups are required
+## to nominate group level access control with Cluster Policies.
+## 
+## Parameters:
+## - `group_name`: Specifies the name of the engineer group.
+## - `allow_cluster_create`: Specify whether to allow the group to create clusters.
+## - `allow_databricks_sql_access`: Specify whether to allow SQL access to Databricks.
+## ---------------------------------------------------------------------------------------------------------------------
+module "databricks_workspace_group" {
+  source       = "./modules/databricks_group"
+  
+  group_name                  = var.databricks_workspace_group
+  allow_cluster_create        = true
+  allow_databricks_sql_access = true
+
+  providers = {
+    databricks.workspace = databricks.workspace
+  }
+}
+
+
+## ---------------------------------------------------------------------------------------------------------------------
 ## DATABRICKS CLUSTER POLICY MODULE
 ## 
 ## This module sets up a cluster policy in a Databricks workspace.
@@ -184,7 +208,7 @@ module "databricks_cluster_policy" {
   ]
   
   cluster_policy_name           = var.databricks_cluster_policy_name
-  group_name                    = var.databricks_admin_group
+  group_name                    = module.databricks_workspace_group.databricks_group_name
   data_security_mode            = var.databricks_cluster_data_security_mode
   instance_pool_autotermination = var.databricks_cluster_policy_autotermination_minutes
 

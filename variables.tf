@@ -3,11 +3,6 @@
 ## These variables are expected to be passed in by the operator
 ## ---------------------------------------------------------------------------------------------------------------------
 
-variable "databricks_admin_group" {
-  type        = string
-  description = "Databricks Admin Group Name for Cluster Policy"
-}
-
 variable "databricks_cluster_name" {
   type        = string
   description = "Databricks Cluster Name"
@@ -32,6 +27,12 @@ variable "DATABRICKS_CLUSTERS" {
   type        = number
   description = "Number representing the amount of Databricks Clusters to spin up"
   default     = 0
+}
+
+variable "databricks_workspace_group" {
+  type        = string
+  description = "Databricks Workspace Group Name for Cluster Policy"
+  default     = "example-engineer-group"
 }
 
 variable "databricks_schema_name" {
