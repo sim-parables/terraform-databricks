@@ -14,11 +14,6 @@ output "databricks_cluster_ids" {
   value       = module.databricks_cluster[*].databricks_cluster_id
 }
 
-output "databricks_external_location_url" {
-  description = "Azure Metastore Bucket ABFS URL"
-  value       = module.databricks_metastore.databricks_external_location_url
-}
-
 output "databricks_example_holdings_data_path" {
   description = "Databricks Example Holding Data Unity Catalog File Path"
   value       = module.databricks_sample_data.databricks_volume_file_paths[0]
