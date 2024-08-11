@@ -135,7 +135,7 @@ resource "databricks_artifact_allowlist" "this" {
 resource "databricks_library" "jar" {
   provider   = databricks.workspace
   depends_on = [ databricks_artifact_allowlist.this ]
-  for_each   = toset(var.jar_libraries)
+  for_each   = var.jar_libraries
 
   cluster_id = databricks_cluster.this.id
   jar        = each.value
@@ -154,7 +154,7 @@ resource "databricks_library" "jar" {
 resource "databricks_library" "whl" {
   provider   = databricks.workspace
   depends_on = [ databricks_artifact_allowlist.this ]
-  for_each   = toset(var.whl_libraries)
+  for_each   = var.whl_libraries
 
   cluster_id = databricks_cluster.this.id
   whl        = each.value
