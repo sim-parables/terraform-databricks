@@ -58,7 +58,7 @@ locals {
     },
   ],
   [
-    for l in var.var.databricks_cluster_library_files :
+    for l in var.databricks_cluster_library_files :
     {
       catalog_name   = var.databricks_catalog_name
       schema_name    = var.databricks_schema_name
@@ -125,32 +125,6 @@ module "databricks_workspace_access_token" {
 
 
 ## ---------------------------------------------------------------------------------------------------------------------
-## DATABRICKS SERVICE ACCOUNT SECRETS MODULE
-## 
-## This module creates a service account secrets in a Databricks secret scope. The secret stores the 
-## client ID/ secret of cloud provider.
-## 
-## Parameters:
-## - `secret_scope_id`: Specifies the secret scope ID where the secret will be stored
-## - `secret_name`: Specifies the name of the secret
-## - `secret_data`: Specifies the data of the secret
-## ---------------------------------------------------------------------------------------------------------------------
-module "databricks_service_account_secrets" {
-  source      = "./modules/databricks_secret"
-  depends_on  = [ module.databricks_metastore ]
-  for_each    = var.databricks_secrets
-  
-  secret_scope_id = module.databricks_secret_scope.databricks_secret_scope_id
-  secret_name     = each.value.secret_name
-  secret_data     = each.value.secret_data
-  
-  providers = {
-    databricks.workspace = databricks.workspace
-  }
-}
-
-
-## ---------------------------------------------------------------------------------------------------------------------
 ## DATABRICKS DRIVER NODE INSTANCE POOL MODULE
 ## 
 ## This module creates an instance pool in a Databricks workspace specifically for driver nodes.
@@ -204,6 +178,10 @@ module "databricks_instance_pool_node" {
 ## ---------------------------------------------------------------------------------------------------------------------
 module "databricks_cluster_policy" {
   source = "./modules/databricks_cluster_policy"
+  depends_on = [ 
+    module.databricks_instance_pool_node,
+    module.databricks_instance_pool_driver 
+  ]
   
   cluster_policy_name           = var.databricks_cluster_policy_name
   group_name                    = var.databricks_admin_group
@@ -236,8 +214,11 @@ module "databricks_cluster_policy" {
 ## ---------------------------------------------------------------------------------------------------------------------
 module "databricks_cluster" {
   source     = "./modules/databricks_cluster"
-  depends_on = [ module.databricks_cluster_policy ]
   count      = var.DATABRICKS_CLUSTERS
+  depends_on = [ 
+    module.databricks_cluster_policy,
+    module.databricks_sample_data 
+  ]
   
   cluster_name            = "${var.databricks_cluster_name}-${count.index}"
   node_instance_pool_id   = module.databricks_instance_pool_node.instance_pool_id
@@ -313,7 +294,6 @@ data "http" "sample_weather_data" {
 ## ---------------------------------------------------------------------------------------------------------------------
 module "databricks_sample_data" {
   source       = "./modules/databricks_catalog_config"
-  depends_on   = [ module.databricks_metastore ]
   
   databricks_schemas = local.databricks_schemas
   databricks_volumes = local.databricks_volumes
