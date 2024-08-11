@@ -76,17 +76,15 @@ locals {
     }
   }
 
-  databricks_cluster_jar_libraries = {
-    jar = [
+  databricks_cluster_jar_libraries = toset([
     for l in var.databricks_cluster_library_files :
     "/Volumes/${var.databricks_catalog_name}/${var.databricks_schema_name}/Libraries/${l.file_name}" if strcontains(l.file_name, ".jar")
-  ]}
+  ])
 
-  databricks_cluster_whl_libraries = {
-    whl = [
+  databricks_cluster_whl_libraries = toset([
     for l in var.databricks_cluster_library_files :
     "/Volumes/${var.databricks_catalog_name}/${var.databricks_schema_name}/Libraries/${l.file_name}" if strcontains(l.file_name, ".whl")
-  ]}
+  ])
 }
 
 

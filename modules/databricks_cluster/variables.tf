@@ -68,15 +68,15 @@ variable "library_paths" {
 }
 
 variable "jar_libraries" {
-  description = "Map of List of JAR files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
-  type        = map(list(string))
-  default     = {}
+  description = "Set of JAR files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
+  type        = set(string)
+  default     = []
 }
 
 variable "whl_libraries" {
-  description = "Map of List of Python WHL files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
-  type        = map(list(string))
-  default     = {}
+  description = "Set of Python WHL files to install on cluster which can be found in Databricks Unity Catalog Library Volume"
+  type        = set(string)
+  default     = []
 }
 
 variable "azure_attributes" {
