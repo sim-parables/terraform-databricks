@@ -86,12 +86,24 @@ resource "databricks_cluster" "this" {
   }
 
   dynamic "azure_attributes" {
-    for_each = var.azure_attributes
+    for_each = coalesce(var.azure_attributes, {})
     
     content {
       availability       = azure_attributes.value.availability
       first_on_demand    = azure_attributes.value.first_on_demand
       spot_bid_max_price = azure_attributes.value.spot_bid_max_price
+    }
+  }
+
+  dynamic "aws_attributes" {
+    for_each = coalesce(var.aws_attributes, {})
+
+    content {
+      availability           = aws_attributes.value.availability
+      zone_id                = aws_attributes.value.zone_id
+      first_on_demand        = aws_attributes.value.first_on_demand
+      spot_bid_price_percent = aws_attributes.value.spot_bid_price_percent
+      instance_profile_arn   = aws_attributes.value.instance_profile_arn
     }
   }
 

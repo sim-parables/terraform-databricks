@@ -90,3 +90,17 @@ variable "azure_attributes" {
     })
   })
 }
+
+variable "aws_attributes" {
+  description = "AWS Compute Configurations for Databricks Clusters"
+  default     = null
+  type        = object({
+    attributes = object({
+      availability           = string
+      zone_id                = string
+      first_on_demand        = number
+      spot_bid_price_percent = number
+      instance_profile_arn   = string
+    })
+  })
+}
