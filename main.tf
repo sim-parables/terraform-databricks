@@ -345,7 +345,6 @@ module "databricks_sample_tables" {
   count      = var.DATABRICKS_CLUSTERS > 0 ? 1 : 0
   depends_on = [ 
     module.databricks_sample_data,
-    module.databricks_cluster
   ]
 
   databricks_tables = [
