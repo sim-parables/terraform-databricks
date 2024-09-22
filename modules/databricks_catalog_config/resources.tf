@@ -104,8 +104,14 @@ resource "databricks_file" "this" {
 ## This resource defines a Databricks Unity Catalog SQL Table.
 ##
 ## Parameters:
-## - `path`: Databricks Unity Catalog File path.
-## - `content_base64`: Base64 encoded content for file upload.
+## - `cluster_id`: Optional Databricks cluster ID to execute SQL commands with.
+## - `cataalog_name`: Name of existing catalog to store the table in.
+## - `schema_name`: Name of existing schema to store the table in.
+## - `name`: Name of the SQL table.
+## - `table_type`: Distinguishes a view vs. managed/external table.
+## - `data_source_format`: Table file format.
+## - `storage_location`: Table file URL storage location.
+## - `comment`: Description of table contents.
 ## ---------------------------------------------------------------------------------------------------------------------
 
 resource "databricks_sql_table" "this" {
@@ -113,6 +119,7 @@ resource "databricks_sql_table" "this" {
   depends_on = [ databricks_schema.this ]
   for_each   = tomap({ for t in coalesce(var.databricks_tables, []) : "${t.table_name}" => t })
 
+  cluster_id         = each.value.cluster_id
   catalog_name       = each.value.catalog_name
   schema_name        = each.value.schema_name
   name               = each.value.table_name

@@ -349,7 +349,7 @@ module "databricks_sample_tables" {
 
   databricks_tables = [
     {
-      cluster_id         = module.databricks_cluster[count.index].databricks_cluster_id
+      cluster_id         = null
       catalog_name       = var.databricks_catalog_name
       schema_name        = var.databricks_schema_name
       table_name         = "example_weather"
